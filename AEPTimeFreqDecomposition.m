@@ -29,20 +29,21 @@ ts_csc = ts_csc./10^6 ; % time-stamps in seconds
 
 % Generate all the timestamps corresponding to all data points
 tt = [0:1/Fs:511/Fs]' ;  
-tts_csc = [];           % Initializing a new empty matrix
+tts_csc = [];           % Initializing a new empty matrix to interpolate time-stamps of data points
 
 for i = 1:length(ts_csc)
     tts_csc = [tts_csc  [ts_csc(i) + tt]];
 end
-tts_csc = tts_csc(:);
-kmin = round(Fs*(x_min));         % Min x-limit  
-kmax = round(Fs*(x_max));         % Max x-limit  
 
-tx = (x_min:1/Fs:x_max)*1000 ; % time in milliseconds
+tts_csc = tts_csc(:); % Linearizing the interpolated time-stamp series in a single column vector
+kmin = round(Fs*(x_min));         % Minimum x-limit  
+kmax = round(Fs*(x_max));         % Maximum x-limit  
 
-bin_csc_BLA = [];
+tx = (x_min:1/Fs:x_max)*1000 ; % time of interest in milliseconds
 
-bin_csc_BLA = zeros(length([kmin:kmax]),numTrials);
+ 
+
+bin_csc_BLA = zeros(length([kmin:kmax]),numTrials); % Initializing a new zero matrix for storing data values of interest where data is arranged as follows: rows represent data values for selected time of interest, whilecolumns represent trial numbers
 
 for i = 1:numTrials
     min_dist(1,i) = min(abs(tts_csc(:)-ts_events(i)));
@@ -60,34 +61,19 @@ mm = smooth(mm,0.01*length(bin_csc_BLA),'loess');
    
 %% Filtering the signal using a bandpass filter
 
-Fnyq = round(Fs/2);
-F_cutL = 2; F_cutH = 60; %Low and High cut off frequencies (Hz)
-[zz,pp,kk] = ellip(20, 0.2, 80, [F_cutL F_cutH]./Fnyq);
+
+F_cutL = 2; F_cutH = 60; % Low and High cut off frequencies in Hz
+[zz,pp,kk] = ellip(20, 0.2, 80, [F_cutL F_cutH]./Fnyq); % a 20th orderelliptic digital bandpass filter  
 [sos,g] = zp2sos(zz,pp,kk);	      % Convert to SOS form
 Hd = dfilt.df2tsos(sos,g);        % Create a dfilt object
 Data_filt  = filtfilthd(Hd, mm); % Filtered signal
 mm = Data_filt;
 
-% Applying a bandstop filter to get rid of line noise
 
-% Fnyq=round(Fs/2);
-% [z,p,k] = ellip(20, 0.2, 80, [49.5 50.5]./Fnyq,'stop');
-% [sos2,g2] = zp2sos(z,p,k);	         % Convert to SOS form
-% Hd2 = dfilt.df2tsos(sos2,g2);        % Create a dfilt object
-% Data_filt  = filtfilthd(Hd2, mm);    % Filtered signal
-% mm=Data_filt;
 
-% Applying a bandstop filter to get rid of line noise
+baseline = [-500 0 500]; % time range of interest in milliseconds
 
-% Fnyq=round(Fs/2);
-% [z,p,k] = ellip(20, 0.2, 80, [99.5 100.5]./Fnyq,'stop');
-% [sos2,g2] = zp2sos(z,p,k);	         % Convert to SOS form
-% Hd2 = dfilt.df2tsos(sos2,g2);        % Create a dfilt object
-% Data_filt  = filtfilthd(Hd2, mm);    % Filtered signal
-% mm=Data_filt;
-
-baseline = [-500 0 500];
-% convert baseline from ms to indices
+% convert baseline from milliseconds to indices
 baseidx = dsearchn(tx',baseline');
 
 baselineData = mean(mm(baseidx(1):baseidx(2)));
