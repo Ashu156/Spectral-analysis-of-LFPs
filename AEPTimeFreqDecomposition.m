@@ -1,27 +1,36 @@
-clear all; close all; clc;
+% This piece of code uses a family of complex Morlet wavelets to decompose
+% the signal (Auditory Evoked Potentials, here) in the time-frequency plane
 
-load('F:\LFPs\AEP2019\Rat29\10kpips\matfile.mat');
 
-Fs = 1000; % Sampling frequency
+clear all; % clearing the workspace variables
+close all; % closing any tab if open from previous execution
+clc;       % clearing the command prompt space 
 
-x_min = -0.5; x_max = 0.5;
+load('F:\LFPs\AEP2019\Rat29\10kpips\matfile.mat'); % loading the .mat file of interest
+
+
+x_min = -0.5; % decides the minimum time point of consideration (in seconds) of the AEP from event onset 
+x_max = 0.5;  % decides the maximum time point of consideration (in seconds) of the AEP from event onset
 
 % CHOOSING THE REQUIRED CHANNEL
 
 ts_csc = CSC31_TS; % Channel of choice
 dp_csc = (CSC31_DP); % Data points in channel of choice
-ADBitVolts = (str2double(CSC31_NlxHeader{15}(13:38)))*10^6;% in microVolts
-dp_csc = dp_csc*ADBitVolts; %CSC data points in microVolts
-dp_csc = dp_csc(:);
+Fs = str2num(CSC28_NlxHeader{14}(end-3:end)); % Sampling frequency
+Fnyq = round(Fs/2);                           % Nyquist frequency
+ADBitVolts = (str2double(CSC31_NlxHeader{15}(13:38)))*10^6; % conversion factor in microVolts
+dp_csc = dp_csc*ADBitVolts; % data points in microVolts
+dp_csc = dp_csc(:); % linearizing the data points in a single column vector
 
 % dp_csc = detrend(dp_csc,'linear');
-ts_events = (Events_tone_on + 000000.00)./10^6; % Selecting events of choice (onset of white noise pips in this case)
+ts_events = (Events_tone_on + 000000.00)./10^6; % Selecting events of choice (onset of auditory stimulus in this case)
 numTrials = length(ts_events); % number of events
-ts_csc = ts_csc./10^6 ; % In seconds
+ts_csc = ts_csc./10^6 ; % time-stamps in seconds
 
 % Generate all the timestamps corresponding to all data points
-tt = [0:1/Fs:511/Fs]' ;
-tts_csc = [];
+tt = [0:1/Fs:511/Fs]' ;  
+tts_csc = [];           % Initializing a new empty matrix
+
 for i = 1:length(ts_csc)
     tts_csc = [tts_csc  [ts_csc(i) + tt]];
 end
