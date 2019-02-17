@@ -1,5 +1,5 @@
 % This piece of code uses a family of complex Morlet wavelets to decompose
-% the signal (Auditory Evoked Potentials, here) in the time-frequency plane
+% the signal (Auditory Evoked Potentials in this case) in the time-frequency plane
 
 
 clear all; % clearing the workspace variables
@@ -56,14 +56,14 @@ bin_csc_BLA = bin_csc_BLA(1:length(tx),:);
 %% Plotting the perievent hsitogram
 % figure; clf
 % subplot(3,1,2:3); hold on
-mm = mean(bin_csc_BLA,2);
-mm = smooth(mm,0.01*length(bin_csc_BLA),'loess');
+mm = mean(bin_csc_BLA,2); % average of the recorded volatage waveform over all trials
+mm = smooth(mm,0.01*length(bin_csc_BLA),'loess'); % smoothing out the average voltage waveform
    
 %% Filtering the signal using a bandpass filter
 
 
 F_cutL = 2; F_cutH = 60; % Low and High cut off frequencies in Hz
-[zz,pp,kk] = ellip(20, 0.2, 80, [F_cutL F_cutH]./Fnyq); % a 20th orderelliptic digital bandpass filter  
+[zz,pp,kk] = ellip(20, 0.2, 80, [F_cutL F_cutH]./Fnyq); % a 20th order elliptic digital bandpass filter with 0.2 dB passband ripple and 80 dB attenuation in the stopband 
 [sos,g] = zp2sos(zz,pp,kk);	      % Convert to SOS form
 Hd = dfilt.df2tsos(sos,g);        % Create a dfilt object
 Data_filt  = filtfilthd(Hd, mm); % Filtered signal
@@ -73,39 +73,38 @@ mm = Data_filt;
 
 baseline = [-500 0 500]; % time range of interest in milliseconds
 
-% convert baseline from milliseconds to indices
-baseidx = dsearchn(tx',baseline');
+baseidx = dsearchn(tx',baseline'); % convert baseline from milliseconds to indices
 
-baselineData = mean(mm(baseidx(1):baseidx(2)));
-normalizedData = mm(:) - baselineData;
+baselineData = mean(mm(baseidx(1):baseidx(2))); % baseline data starting 500 ms before the event onset
+normalizedData = mm(:) - baselineData;         % mean subtraction of the baseline data from the whole data
 
 %%
 % wavelet parameters
-min_freq = 1;
-max_freq = 150;
-num_frex = 100;
+min_freq = 1;   % minimum frequency of interest
+max_freq = 150; % maximun=m frequency of interest
+num_frex = 100; % number of frequencies to be covered between the minimum and the maximum frequencies
 
 
 % other wavelet parameters
-frex = logspace(log10(min_freq),log10(max_freq),num_frex);
+frex = logspace(log10(min_freq),log10(max_freq),num_frex); % defining the frequency vector (logarithmic in this case)
 % frex = min_freq:0.1:max_freq;
-time = -1:1/Fs:1;
+time = -1:1/Fs:1; % time coverage of the mother wavelet
 half_wave = (length(time)-1)/2;
 
 % FFT parameters
-nKern = length(time);
-nData = length(normalizedData)*numTrials;
-nConv(1:2) = nKern + nData - 1;
+nKern = length(time); % number of points in the kernel
+nData = length(normalizedData)*numTrials; % number of data points
+nConv(1:2) = nKern + nData - 1; % number of convolution points
 nConv(3)   = nKern + length(normalizedData)-1; % ERP is only one trial-length
 
 % initialize output time-frequency data
-tf = zeros(length(frex),length(normalizedData));
+tf = zeros(length(frex),length(normalizedData)); % initializing the time-frequency matrix iwth zeros
 
-%% prepare non-phase-locked activity
+
 
 % compute ERP
 erp = normalizedData;
-
+% Detrending the data (linear detrending)
 erp_orig = polyfit(tx',erp,1);
 erp_detrend = erp - polyval(erp_orig,tx');
 erp_dt = polyfit(tx',erp_detrend,1);
