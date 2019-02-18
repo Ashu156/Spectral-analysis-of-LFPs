@@ -1,10 +1,26 @@
+% This piece of code helps one to import data from a .csv file into MATLAB. Here,
+% the dataset is from calcium imaging experiments. Eventually, the output is a raster plot 
+% where the data is visualized along three axes. X-axis represents the Ids of the cells recorded,
+% Y-axis represents the time of recording, and, the Z-axis represents the recorded signal intensity
+% from a particular cell at that particular instant of time. In this example, the cell Ids were 'C000',
+% 'C0001', so on and so forth. Since indexing in MATLAB starts from 1, the cell Ids have been 
+% transformed as the following:
+% Actual cell ID              Transformed Cell Id
+%    'C000'                            1
+%    'C001'                            2
+%    'C002'                            3
+%     ...                             ...
+%     ...                             ...
+%     ...                             ...
+%    'Cxxx'                           xxx + 1
+
 close all; 
 clear all; 
 clc;
 
 %% Loading the data file into MATLAB
 
-[file, path]=uigetfile;        % graphic user interface for selecting the data file
+[file, path] = uigetfile;        % graphic user interface for selecting the data file
 rawData  = readtable(strcat(path,file)); % reading the data from the file into MATLAB
 rawData = sortrows(rawData,'Time_s_','ascend'); % sorting values according to time
 data = table2cell(rawData); % converting table into cell array
