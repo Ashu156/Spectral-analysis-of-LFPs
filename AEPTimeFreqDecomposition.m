@@ -256,3 +256,6 @@ for i=1:length(frequencyBand)
     PowerEvoked{1,i} = tfEvoked(freqLowidx(i):freqHighidx(i),baseidx(2):baseidx(3));
     
 end
+
+%% end of code 
+
