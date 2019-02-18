@@ -1,4 +1,12 @@
-close all; clear all; clc;
+% This piece of code calculates the cross-correlation between LFPs of two channels
+% and plots the same. This is inspired by the following publication:
+% "Cross-correlation of instantaneous amplitudes of field potential 
+% oscillations: A straightforward method to estimate the directionality and lag between brain areas"
+% https://doi.org/10.1016/j.jneumeth.2010.06.019
+
+close all; 
+clear all; 
+clc;
 
 load('F:\LFPs\AEP2019\Rat32\10kpips\matfile.mat');
 
@@ -10,7 +18,7 @@ ADBitVolts = str2num(CSC28_NlxHeader{15}(13:28)) ;% in Volts
 ADV1 = 10^6*ADBitVolts; % in microVolts
 dp_csc1 = dp_csc1*ADV1; %CSC data points in microVolts
 R1 = dp_csc1(:); % Linearizing the data points
-R1 = detrend(dp_csc1,'constant');
+R1 = detrend(dp_csc1,'constant'); % linear detrending the 1st time series
 
 % 2nd time series (full)
 ts_csc2 = (CSC31_TS)./10^6;
@@ -20,7 +28,7 @@ ADBitVolts = str2num(CSC31_NlxHeader{15}(13:38)) ;% in Volts
 ADV2 = 10^6*ADBitVolts; % in microVolts
 dp_csc1 = dp_csc2*ADV2; %CSC data points in microVolts
 R2 = dp_csc2(:); % Linearizing the data points
-R2 = detrend(dp_csc2,'constant');
+R2 = detrend(dp_csc2,'constant'); % linear detrending the 2nd time series
 
 % Linearized timestamps for the 1st and 2nd time series
 
