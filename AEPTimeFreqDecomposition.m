@@ -1,5 +1,6 @@
-% This piece of code uses a family of complex Morlet wavelets to decompose
-% the signal (Auditory Evoked Potentials in this case) in the time-frequency plane
+% This script uses a family of complex Morlet wavelets to decompose
+% the signal (Auditory Evoked Potentials in this case) in the 
+% time-frequency plane.
 
 
 clear all; % clearing the workspace variables
