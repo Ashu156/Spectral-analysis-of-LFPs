@@ -1,3 +1,4 @@
 # Spectral-analysis-of-LFPs
+Work in progress
 Spectral analysis of LFPs / analyzing LFPs in the time-frequency domain
-Conaptible with MATALB 2014a
+Compatible with MATALB 2014a
