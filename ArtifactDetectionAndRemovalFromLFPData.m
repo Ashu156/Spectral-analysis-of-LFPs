@@ -38,8 +38,6 @@ clc;       % Clear the command window
 rawData = load(strcat(path, fileName));
 
 
-x_min = -0.5; x_max = 1.5;
-
 % CHOOSING THE REQUIRED CHANNEL
 
 ts_csc = rawData.CSC26_TS; % Channel of choice
@@ -50,8 +48,6 @@ dp_csc = dp_csc*ADBitVolts; %CSC data points in microVolts
 dp_csc = dp_csc(:);
 
 dp_csc = detrend(dp_csc,'constant');
-ts_events = (rawData.Events_tone_on + 000000.00)./10^6; % Selecting events of choice (onset of white noise pips in this case)
-numTrials = length(rawData.ts_events); % number of events
 ts_csc = ts_csc./10^6 ; % In seconds
 data_length = length(dp_csc);
 data_segment = dp_csc(1:data_length);
@@ -79,13 +75,13 @@ end
 
 sig_us = data_art(1:data_length) - mean(data_art(1:data_length)); % signal detrending
 
-Fnyq = round(Fs/2);
-F_cutL = 150; F_cutH = 300; %Low and High cut off frequencies (Hz)
-[zz,pp,kk] = ellip(20, 0.2, 80, [F_cutL F_cutH]./Fnyq);
+Fnyq = round(Fs/2); % Nyquist frequency
+F_cutL = 150; F_cutH = 300; % Low and High cut off frequencies (Hz)
+[zz,pp,kk] = ellip(20, 0.2, 80, [F_cutL F_cutH]./Fnyq); % creating an elliptic filter
 [sos,g] = zp2sos(zz,pp,kk);	      % Convert to SOS form
 Hd = dfilt.df2tsos(sos,g);        % Create a dfilt object
 Data_filt  = filtfilthd(Hd, sig_us); % Filtered signal
-x_bpf = Data_filt;
+x_bpf = Data_filt; % bandpass filtered signal
 
 
 % x_bpf = bandpass_filter(sig_us, Fs, 150, 300, 512); % bandpass filtering the signal between 150 and 300 Hz
@@ -100,7 +96,7 @@ F_cutL = 300; F_cutH = 490; %Low and High cut off frequencies (Hz)
 [sos,g] = zp2sos(zz,pp,kk);	      % Convert to SOS form
 Hd = dfilt.df2tsos(sos,g);        % Create a dfilt object
 Data_filt  = filtfilthd(Hd, sig_us); % Filtered signal
-x_bpf_sp = Data_filt;
+x_bpf_sp = Data_filt; % bandpass filtered spike signal
 
 sp = median(abs(x_bpf_sp))/0.6745; % unbiased estimate of noise variance for spike data
 
