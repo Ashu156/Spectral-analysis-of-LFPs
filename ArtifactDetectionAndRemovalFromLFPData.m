@@ -4,10 +4,14 @@
 % the following publication:
 % https://www.sciencedirect.com/science/article/pii/S0165027014000387?via%3Dihub
 % https://www.ncbi.nlm.nih.gov/pubmed/24512692
-% data_segment/data_art is the input noisy signal
-% data_new is the cleaned output signal
-% Written and tested in MATLAB 2014a
+% Description:
+%
+%                   data_segment/data_art:    INPUT NOISY SIGNAL
+%                   data_new             :    CLEANED OUTPUT SIGNAL 
+%
+% Written in MATLAB 2014a and tested with MATLAB 2014a and MATLAB 2018b
 %% 
+
 tic;       % Start a timer
 
 clear all; % Clear the MATLAB workspace
@@ -32,7 +36,7 @@ clc;       % Clear the command window
 % xlabel('Time, Sec'); ylabel('Amplitude, mV');
 % title('A Segment of Raw Data from Neural Recording');
 
-%% Dataset from own recordings
+%% DATASET FROM OWN RECORDINGS
 
 [fileName, path] = uigetfile;
 rawData = load(strcat(path, fileName));
@@ -53,7 +57,7 @@ data_length = length(dp_csc);
 data_segment = dp_csc(1:data_length);
 
 
-% Generate all the timestamps corresponding to all data points
+% GENERTAE TIMESTAMPS CORRESPONDING TO ALL DATA POINTS IN THE RECORDED SIGNAL
 tt = [0:1/Fs:511/Fs]';
 tts_csc = [];
 for i = 1:length(ts_csc)
@@ -61,13 +65,13 @@ for i = 1:length(ts_csc)
 end
 tts_csc = tts_csc(:);
 
-%% Initial Filtering and Threshold Calculation
+%% INITIAL FILTERING AND THRESHOLD CALCULATION
 
 data_art = data_segment;
 
 data_length = 2^nextpow2 (length(data_art)); % length of the input signal
 
-% zero-padding data for fast computation
+% ZERO-PADDING DATA FOR FAST CALCULATION
 
 if (data_length > length(data_art))
     data_length = 2^(nextpow2 (length(data_art))-1);
@@ -154,7 +158,7 @@ A_new(id) = 0;
 D_new = D;
 for i=1:N
     % Double verification on artifacts or spikes
-%Weighted Thresholding
+% Weighted Thresholding
 if (i == 3 || i == 4 || i == 5 || i == 6) % D4, D5, D6 contains spike data, so high threshold
     k2 = 3;
 else
