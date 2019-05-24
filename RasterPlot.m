@@ -1,4 +1,4 @@
-% This piece of code helps one to import data from a .csv file into MATLAB. Here,
+% This script helps one to import data from a .csv file into MATLAB. Here,
 % the dataset is from calcium imaging experiments. Eventually, the output is a raster plot 
 % where the data is visualized along three axes. X-axis represents the Ids of the cells recorded,
 % Y-axis represents the time of recording, and, the Z-axis represents the recorded signal intensity
