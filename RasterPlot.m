@@ -14,6 +14,10 @@
 %     ...                             ...
 %    'Cxxx'                           xxx + 1
 
+% Dependencies:
+% 'buildcmap' function written by M Sohrabinia (available at MATLAB File Exchange)
+
+
 close all; 
 clear all; 
 clc;
