@@ -1,7 +1,7 @@
 % This script plots evoked potential in response to a sensory stimulus.
 % Script still in progress.
 % Based on evoked.m from Chronux 2.12 toolbox
-% Created and tested with MATLAB 2014a
+% Written in MATLAB 2014a; tested in MATLAB 2014a, 2018b.
 
 %%
 close all;
