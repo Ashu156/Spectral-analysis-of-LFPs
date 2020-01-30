@@ -97,4 +97,10 @@ plot(smooth(median(aep, 2), 15*2, 'sgolay'), 'linew', 2)
 % plot([100 100], [-400 600], '--k', 'linew', 1.5);
 xlim([0 200])
 
+figure; 
+plot(smooth(median(aep2, 2), 15*2, 'sgolay'), 'linew', 2)
+% hold on
+% plot([100 100], [-400 600], '--k', 'linew', 1.5);
+xlim([0 200])
+
 %% end of code
